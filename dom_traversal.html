@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DOM Traversal Interactive</title>
+<style>
+  /* Profile header styling */
+  header {
+    background-color: #f0f0f0;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+    border-bottom: 2px solid #ccc;
+  }
+  header h1 {
+    margin: 0 0 10px 0;
+  }
+  header p {
+    margin: 2px 0;
+    font-size: 0.9em;
+  }
+
+  /* Container for the tree */
+  #tree-container {
+    margin: 20px auto;
+    width: 400px;
+    border: 1px solid #333;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Grandparent styling */
+  .grandparent {
+    background-color: #eee28a; /* light yellow */
+    padding: 15px;
+    border: 1px solid #ccc;
+  }
+
+  /* Parent styling */
+  .parent {
+    background-color: #a9d0f5; /* light blue */
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #999;
+  }
+
+  /* Child styling */
+  .child {
+    background-color: #f9d6d5; /* light pink */
+    margin: 5px 0;
+    padding: 8px;
+    border: 1px solid #bbb;
+  }
+
+  /* Highlight selected node */
+  .highlight {
+    background-color: #ffcc00 !important;
+    border-color: #cc9900 !important;
+  }
+
+  /* Buttons container */
+  #buttons {
+    margin: 20px auto;
+    width: 600px;
+    text-align: center;
+  }
+
+  button {
+    margin: 5px 8px;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Profile Information</h1>
+  <p><strong>Complete Name:</strong> Charls John Clavo Cordova</p>
+  <p><strong>Sex:</strong> Male</p>
+  <p><strong>Address:</strong> Villa Peña, Bagumbayan Pequeño, Goa, Camarines Sur</p>
+  <p><strong>Course, Year, and Section:</strong> BS Information Technology, 2nd Year, Section B</p>
+  <p><strong>Name of School:</strong> Partido State University</p>
+  <p><strong>Semester and Academic Year:</strong> 2nt Semester, 2024-2025</p>
+  <p><strong>Subject Code and Title:</strong> PF2 - Event Driven Programming</p>
+  <p><strong>Name of Subject Instructor:</strong> Prof. Arjay Abio</p>
+</header>
+
+<h2 style="text-align:center;">DOM Traversal Interactive</h2>
+
+<div id="tree-container">
+  <div class="grandparent" id="grandparent">
+    Grandparent
+    <div class="parent" id="parent1">
+      Parent 1
+      <div class="child" id="child1">Child 1</div>
+      <div class="child" id="child2">Child 2</div>
+    </div>
+    <div class="parent" id="parent2">
+      Parent 2
+      <div class="child" id="child3">Child 3</div>
+      <div class="child" id="child4">Child 4</div>
+    </div>
+  </div>
+</div>
+
+<div id="buttons">
+  <button id="traverseDownBtn">Traverse Down</button>
+  <button id="traverseUpBtn">Traverse Up</button>
+  <button id="traverseNextSiblingBtn">Traverse Next Sibling</button>
+  <button id="traversePrevSiblingBtn">Traverse Previous Sibling</button>
+  <button id="addChildBtn">Add Child</button>
+  <button id="deleteCurrentBtn">Delete Current</button>
+</div>
+
+<script>
+  // JavaScript for DOM Traversal Interactive
+
+  // Current selected node variable
+  let selectedNode = null;
+
+  // Utility function to clear highlight from all nodes
+  function clearHighlight() {
+    const highlighted = document.querySelectorAll('.highlight');
+    highlighted.forEach(node => node.classList.remove('highlight'));
+  }
+
+  // Function to select a node and highlight it
+  function selectNode(node) {
+    if (!node) return;
+    clearHighlight();
+    selectedNode = node;
+    selectedNode.classList.add('highlight');
+  }
+
+  // Add event listeners to all nodes for selection
+  function addSelectionListeners() {
+    const allNodes = document.querySelectorAll('.grandparent, .parent, .child');
+    allNodes.forEach(node => {
+      node.addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent event bubbling to parents
+        selectNode(this);
+      });
+    });
+  }
+
+  // Initial setup: select grandparent by default
+  window.onload = function() {
+    addSelectionListeners();
+    const grandparent = document.getElementById('grandparent');
+    selectNode(grandparent);
+  };
+
+  // Button handlers
+
+  // Traverse Down: select first child element of same hierarchy
+  document.getElementById('traverseDownBtn').addEventListener('click', () => {
+    if (!selectedNode) return alert('No node selected');
+    // Find first child that is grandparent/parent/child
+    const children = selectedNode.children;
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].classList.contains('grandparent') ||
+          children[i].classList.contains('parent') ||
+          children[i].classList.contains('child')) {
+        selectNode(children[i]);
+        return;
+      }
+    }
+    alert('No child node to traverse down to.');
+  });
+
+  // Traverse Up: select parent node if exists and is grandparent/parent/child
+  document.getElementById('traverseUpBtn').addEventListener('click', () => {
+    if (!selectedNode) return alert('No node selected');
+    const parent = selectedNode.parentElement;
+    if (parent && (parent.classList.contains('grandparent') ||
+                   parent.classList.contains('parent') ||
+                   parent.classList.contains('child'))) {
+      selectNode(parent);
+    } else {
+      alert('No parent node to traverse up to.');
+    }
+  });
+
+  // Traverse Next Sibling: select next sibling of same hierarchy type
+  document.getElementById('traverseNextSiblingBtn').addEventListener('click', () => {
+    if (!selectedNode) return alert('No node selected');
+    const currentClass = getNodeLevel(selectedNode);
+    let sibling = selectedNode.nextElementSibling;
+    while (sibling) {
+      if (getNodeLevel(sibling) === currentClass) {
+        selectNode(sibling);
+        return;
+      }
+      sibling = sibling.nextElementSibling;
+    }
+    alert('No next sibling node to traverse to.');
+  });
+
+  // Traverse Previous Sibling: select previous sibling of same hierarchy type
+  document.getElementById('traversePrevSiblingBtn').addEventListener('click', () => {
+    if (!selectedNode) return alert('No node selected');
+    const currentClass = getNodeLevel(selectedNode);
+    let sibling = selectedNode.previousElementSibling;
+    while (sibling) {
+      if (getNodeLevel(sibling) === currentClass) {
+        selectNode(sibling);
+        return;
+      }
+      sibling = sibling.previousElementSibling;
+    }
+    alert('No previous sibling node to traverse to.');
+  });
+
+  // Add Child button handler
+  document.getElementById('addChildBtn').addEventListener('click', () => {
+    if (!selectedNode) return alert('No node selected');
+    const level = getNodeLevel(selectedNode);
+    if (level === 'grandparent') {
+      // Add new parent node with two children
+      const newParentCount = selectedNode.querySelectorAll('.parent').length + 1;
+      const newParent = document.createElement('div');
+      newParent.classList.add('parent');
+      newParent.textContent = `Parent ${newParentCount}`;
+
+      // Add two children to new parent
+      for (let i = 1; i <= 2; i++) {
+        const newChild = document.createElement('div');
+        newChild.classList.add('child');
+        // Count total children under grandparent to number children uniquely
+        const totalChildren = selectedNode.querySelectorAll('.child').length + 1;
+        newChild.textContent = `Child ${totalChildren}`;
+        newParent.appendChild(newChild);
+      }
+
+      selectedNode.appendChild(newParent);
+      addSelectionListeners(); // Add listeners to new nodes
+      selectNode(newParent);
+    } else if (level === 'parent') {
+      // Add new child node
+      const newChildCount = selectedNode.querySelectorAll('.child').length + 1;
+      const newChild = document.createElement('div');
+      newChild.classList.add('child');
+      newChild.textContent = `Child ${newChildCount}`;
+      selectedNode.appendChild(newChild);
+      addSelectionListeners();
+      selectNode(newChild);
+    } else if (level === 'child') {
+      alert('Cannot add child to a child node.');
+    }
+  });
+
+  // Delete Current button handler
+  document.getElementById('deleteCurrentBtn').addEventListener('click', () => {
+    if (!selectedNode) return alert('No node selected');
+    if (selectedNode.classList.contains('grandparent')) {
+      alert('Cannot delete the grandparent node.');
+      return;
+    }
+    const parent = selectedNode.parentElement;
+    selectedNode.remove();
+    addSelectionListeners();
+    // Select parent after deletion if exists, else clear selection
+    if (parent && (parent.classList.contains('grandparent') ||
+                   parent.classList.contains('parent') ||
+                   parent.classList.contains('child'))) {
+      selectNode(parent);
+    } else {
+      selectedNode = null;
+    }
+  });
+
+  // Helper function to get node level class name
+  function getNodeLevel(node) {
+    if (node.classList.contains('grandparent')) return 'grandparent';
+    if (node.classList.contains('parent')) return 'parent';
+    if (node.classList.contains('child')) return 'child';
+    return null;
+  }
+</script>
+</body>
+</html>
