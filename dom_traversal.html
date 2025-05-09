@@ -24,32 +24,40 @@
   #tree-container {
     margin: 20px auto;
     width: 400px;
-    border: 1px solid #333;
+    border: 1px solid black;
     padding: 15px;
     font-family: Arial, sans-serif;
+    /* Remove flex to allow block layout inside */
+    display: block;
   }
 
   /* Grandparent styling */
   .grandparent {
-    background-color: #eee28a; /* light yellow */
-    padding: 15px;
+    background-color: #f0e68c; /* khaki light yellow */
+    padding: 20px;
     border: 1px solid #ccc;
   }
 
   /* Parent styling */
   .parent {
-    background-color: #a9d0f5; /* light blue */
-    margin: 10px 0;
-    padding: 10px;
+    background-color: #add8e6; /* light blue */
+    margin: 15px 0;
+    padding: 15px 20px;
     border: 1px solid #999;
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* Child styling */
   .child {
-    background-color: #f9d6d5; /* light pink */
-    margin: 5px 0;
-    padding: 8px;
+    background-color: #ffe4e1; /* misty rose light pink */
+    margin: 8px 0;
+    padding: 10px 15px;
     border: 1px solid #bbb;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* Highlight selected node */
@@ -63,6 +71,8 @@
     margin: 20px auto;
     width: 600px;
     text-align: center;
+    display: flex;
+    justify-content: center;
   }
 
   button {
