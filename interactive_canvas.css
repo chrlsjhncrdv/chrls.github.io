@@ -35,3 +35,24 @@ canvas {
     background-color: white;
     cursor: crosshair;
 }
+
+/* Mobile responsiveness fix */
+@media (max-width: 600px) {
+    body {
+        min-height: 100vh;
+        justify-content: flex-start;
+        padding-top: 20px;
+    }
+    header, h2, canvas {
+        max-width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+    header {
+        text-align: center;
+    }
+    h2 {
+        margin-bottom: 15px;
+    }
+}
