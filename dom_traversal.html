@@ -75,11 +75,39 @@
     justify-content: center;
   }
 
-  button {
-    margin: 5px 8px;
-    padding: 8px 15px;
+  #buttons button {
+    flex: 1 1 100px;
+    margin: 5px;
+    padding: 8px 0;
     font-size: 1em;
     cursor: pointer;
+    max-width: 150px;
+    min-width: 100px;
+  }
+
+  /* Responsive styles for mobile centering */
+  @media (max-width: 600px) {
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+    #tree-container, #buttons {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+    #buttons {
+      flex-wrap: wrap;
+    }
+    button {
+      flex: 1 1 45%;
+      margin: 5px 5px;
+      min-width: 120px;
+    }
   }
 </style>
 </head>
